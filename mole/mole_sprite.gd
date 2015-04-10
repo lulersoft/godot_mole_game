@@ -1,8 +1,10 @@
-
+#https://github.com/lulersoft/godot_mole_game
+#Godot QQ Group: 302924317 
+#Author:xiaolu (QQ2604904)
 extends AnimatedSprite
 
 var status=0
-var live=1
+var live=0
 
 var speed=0
 var original
@@ -44,7 +46,7 @@ func get_bounding_box():
 	return Rect2(pos, size)
 
 func reset():
-	live=1
+	live=0
 	status=0
 
 func onClick():
@@ -71,7 +73,7 @@ func comeOut():
 func onOutcomplete():
 	comIn()
 	
-func comIn():	
+func comIn():
 	var t=0.3
 	var delay=0.5
 	tween.interpolate_method(self, "set_pos", get_pos(), original, t, Tween.TRANS_LINEAR, Tween.EASE_IN,delay)

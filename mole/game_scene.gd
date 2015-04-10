@@ -1,4 +1,6 @@
-
+#https://github.com/lulersoft/godot_mole_game
+#Godot QQ Group: 302924317 
+#Author:xiaolu (QQ2604904)
 extends Node
 
 var moleArr=[]
@@ -10,7 +12,6 @@ var gameOver=true
 var save_file="user://savedata.bin"
 
 func _ready():
-
 	randomize()
 	for i in range(3):
 		moleArr.push_back(get_node("bg"+str(i)+"/mole0"))
@@ -29,7 +30,6 @@ func _ready():
 	timer.connect("timeout",self,"onTimer")
 	timer.set_one_shot(false)
 	timer.set_wait_time(1)
-	timer.start()
 	
 	add_child(timer)	
 	set_process(true)
@@ -67,6 +67,7 @@ func moleComeOut():
 		
 	if gameOver==false:
 		if mole.status==1:
+			OS.delay_msec(100)
 			moleComeOut()
 		else:
 			mole.comeOut()
@@ -80,8 +81,10 @@ func _on_startButton_pressed():
 
 	hp=100
 	point=0
-	timer.start()
+	
+	get_node("hp").set_value(hp)	
 	get_node("score").set_text("score: "+str(point))
+	timer.start()
 	
 func save():
 	var f = File.new()
