@@ -99,6 +99,7 @@ func _on_startButton_pressed():
 
 	hp=100
 	point=0
+	level=0
 	
 	get_node("hp").set_value(hp)	
 	get_node("score").set_text(score_str+str(point))
