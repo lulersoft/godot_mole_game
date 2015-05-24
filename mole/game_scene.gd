@@ -14,6 +14,7 @@ var len=0
 var score_str="score: "
 var maxscore_str="best: "
 var level=0
+var tween
 
 func _ready():
 	randomize()
@@ -39,6 +40,10 @@ func _ready():
 	
 	add_child(timer)	
 	set_process(true)
+	
+	tween=Tween.new()
+	add_child(tween)
+	tween.start()
 
 func _process(delta):
 	if(Input.is_action_pressed("ui_cancel")):
@@ -51,9 +56,7 @@ func change_speed():
 	level=level+1
 	if (level>=5):
 		level=5
-	timer.stop()
-	timer.set_wait_time(speed())
-	timer.start()
+	timer.set_wait_time(speed())	
 	print("change game level"+str(speed()))
 	
 func onHit(obj):
@@ -72,7 +75,7 @@ func onMiss(obj):
 	if hp<0:
 		hp=0
 	get_node("hp").set_value(hp)	
-	if hp==0:		
+	if hp==0:
 		gameOver=true
 		get_node("Panel").show()
 		timer.stop()
@@ -86,23 +89,26 @@ func onTimer():
 func moleComeOut():	
 	var idx = randi() % len
 	var mole=moleArr[idx]
-		
 	if gameOver==false:
-		if mole.status==1 or mole.live==1:
-			moleComeOut()
+		if mole.status==1:
+			tween.remove_all()
+			tween.interpolate_callback(self, 0.1,"moleComeOut")
 		else:
 			mole.comeOut()
 
 func _on_startButton_pressed():
 	get_node("Panel").hide()
 	gameOver=false
-
 	hp=100
 	point=0
 	level=0
 	
+	for i in range(moleArr.size()):
+		moleArr[i].gamestart()
+	
 	get_node("hp").set_value(hp)	
 	get_node("score").set_text(score_str+str(point))
+	timer.set_wait_time(speed())
 	timer.start()
 	
 func save():
