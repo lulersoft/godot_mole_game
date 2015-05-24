@@ -10,6 +10,10 @@ var point=0
 var maxpoint=0
 var gameOver=true
 var save_file="user://savedata.bin"
+var len=0
+var score_str="score: "
+var maxscore_str="best: "
+var level=0
 
 func _ready():
 	randomize()
@@ -18,33 +22,50 @@ func _ready():
 		moleArr.push_back(get_node("bg"+str(i)+"/mole1"))
 		moleArr.push_back(get_node("bg"+str(i)+"/mole2"))	
 	
-	for i in range(moleArr.size()):		
+	len=moleArr.size()
+	
+	for i in range(len):		
 		moleArr[i].connect("hit on one mole",self,"onHit")
-		moleArr[i].connect("missing one mole",self,"onMiss")
+		moleArr[i].connect("missing one mole",self,"onMiss")	
 		
 	maxpoint=read()
-	get_node("score").set_text("score: "+str(point))
-	get_node("maxscore").set_text("max score: "+str(maxpoint))
+	get_node("score").set_text(score_str+str(point))
+	get_node("maxscore").set_text(maxscore_str+str(maxpoint))
 	
 	timer=Timer.new()
 	timer.connect("timeout",self,"onTimer")
 	timer.set_one_shot(false)
-	timer.set_wait_time(1)
+	timer.set_wait_time(speed())
 	
 	add_child(timer)	
 	set_process(true)
 
 func _process(delta):
-	if(Input.is_action_pressed("ui_cancel")):		
+	if(Input.is_action_pressed("ui_cancel")):
 		get_tree().quit()
+		
+func speed():
+	return (10.0-level)/10.0
+
+func change_speed():
+	level=level+1
+	if (level>=5):
+		level=5
+	timer.stop()
+	timer.set_wait_time(speed())
+	timer.start()
+	print("change game level"+str(speed()))
 	
 func onHit(obj):
 	point=point+1
-	get_node("score").set_text("score: "+str(point))
+	get_node("score").set_text(score_str+str(point))
 	if maxpoint<point:
 		maxpoint=point
 		save()
-	get_node("maxscore").set_text("max score: "+str(maxpoint))
+	get_node("maxscore").set_text(maxscore_str+str(maxpoint))
+	
+	if (point>0 and point%25==0):
+		change_speed()
 
 func onMiss(obj):
 	hp=hp-10
@@ -54,20 +75,20 @@ func onMiss(obj):
 	if hp==0:		
 		gameOver=true
 		get_node("Panel").show()
-		timer.stop()	
-	
+		timer.stop()
+		for i in range(moleArr.size()):
+			moleArr[i].gameover()
+
 func onTimer():
 	if gameOver==false:
 		moleComeOut()
-	
-func moleComeOut():
-	var len=moleArr.size()
-	var idx = randi() % len	
+
+func moleComeOut():	
+	var idx = randi() % len
 	var mole=moleArr[idx]
 		
 	if gameOver==false:
-		if mole.status==1:
-			OS.delay_msec(100)
+		if mole.status==1 or mole.live==1:
 			moleComeOut()
 		else:
 			mole.comeOut()
@@ -75,15 +96,12 @@ func moleComeOut():
 func _on_startButton_pressed():
 	get_node("Panel").hide()
 	gameOver=false
-	
-	for i in range(moleArr.size()):
-		moleArr[i].reset()
 
 	hp=100
 	point=0
 	
 	get_node("hp").set_value(hp)	
-	get_node("score").set_text("score: "+str(point))
+	get_node("score").set_text(score_str+str(point))
 	timer.start()
 	
 func save():

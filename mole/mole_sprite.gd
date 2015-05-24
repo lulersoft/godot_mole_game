@@ -45,9 +45,14 @@ func get_bounding_box():
 	
 	return Rect2(pos, size)
 
-func reset():
+func gamestart():
 	live=0
 	status=0
+	set_pos(original)
+	tween.start()
+	
+func gameover():
+	tween.stop_all()
 
 func onClick():
 
@@ -56,19 +61,22 @@ func onClick():
 	
 	live=0
 	
-	tween.stop(self, "set_pos")	
-	tween.interpolate_callback(self, "comIn", 1)
+	tween.remove_all()
+	tween.interpolate_callback(self, 0.5,"comIn")
 	
 	get_node("anim").play("die")
 	emit_signal("hit on one mole", self)
 	
+	tween.start()
+	
 func comeOut():
-	get_node("anim").play("run")
 	status=1
 	live=1
+	
+	get_node("anim").play("run")
 	var t=0.3
 	tween.interpolate_method(self, "set_pos", get_pos(), to, t, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	tween.interpolate_callback(self, "onOutcomplete", t)
+	tween.interpolate_callback(self,t, "onOutcomplete")	
 	
 func onOutcomplete():
 	comIn()
@@ -77,10 +85,10 @@ func comIn():
 	var t=0.3
 	var delay=0.5
 	tween.interpolate_method(self, "set_pos", get_pos(), original, t, Tween.TRANS_LINEAR, Tween.EASE_IN,delay)
-	tween.interpolate_callback(self, "onIncomplete", t+delay)
+	tween.interpolate_callback(self,t+delay,"onIncomplete")
 	
 func onIncomplete():
 	status=0
 	if live==1:
-		emit_signal("missing one mole", self)	
+		emit_signal("missing one mole", self)
 	
