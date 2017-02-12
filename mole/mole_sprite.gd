@@ -1,4 +1,4 @@
-#https://github.com/lulersoft/godot_mole_game
+https://github.com/lulersoft/godot_mole_game
 #Godot QQ Group: 302924317 
 #Author:xiaolu (QQ2604904)
 extends AnimatedSprite
@@ -37,7 +37,7 @@ func _input(e):
 			onClick()
 
 func get_bounding_box():
-	var size =  get_sprite_frames().get_frame(0).get_size() * get_scale()
+	var size =  get_sprite_frames().get_frame(get_animation(),0).get_size() * get_scale()
 	var pos = get_global_pos()
 	
 	if is_centered():
