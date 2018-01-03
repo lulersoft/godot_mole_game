@@ -1,4 +1,4 @@
-https://github.com/lulersoft/godot_mole_game
+#https://github.com/lulersoft/godot_mole_game
 #Godot QQ Group: 302924317 
 #Author:xiaolu (QQ2604904)
 extends AnimatedSprite
