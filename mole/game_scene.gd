@@ -10,7 +10,7 @@ var point=0
 var maxpoint=0
 var gameOver=true
 var save_file="user://savedata.bin"
-var len=0
+var arrlen=0
 var score_str="score: "
 var maxscore_str="best: "
 var level=0
@@ -23,9 +23,9 @@ func _ready():
 		moleArr.push_back(get_node("bg"+str(i)+"/mole1"))
 		moleArr.push_back(get_node("bg"+str(i)+"/mole2"))	
 	
-	len=moleArr.size()
+	arrlen=moleArr.size()
 	
-	for i in range(len):		
+	for i in range(arrlen):		
 		moleArr[i].connect("hit on one mole",self,"onHit")
 		moleArr[i].connect("missing one mole",self,"onMiss")	
 		
@@ -84,10 +84,10 @@ func onMiss(obj):
 
 func onTimer():
 	if gameOver==false:
-		moleComeOut()
+		moleComeOut()		
 
 func moleComeOut():	
-	var idx = randi() % len
+	var idx = randi() % arrlen
 	var mole=moleArr[idx]
 	if gameOver==false:
 		if mole.status==1:
